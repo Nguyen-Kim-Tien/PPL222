@@ -1,0 +1,5 @@
+
+                func1 : function array [5] of integer(a : integer ){
+                    return 1;
+                }
+                

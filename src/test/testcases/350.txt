@@ -1,0 +1,6 @@
+ main:function void(){
+
+                    x:float=1.3;
+                    print(x,"abv",5,true,a[1,2]);
+                    return 0;                       
+                    } 

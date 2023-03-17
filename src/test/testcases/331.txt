@@ -1,0 +1,6 @@
+ main:function void(){
+
+                     while(x<6){
+                        {{}}
+                     }
+                    } 

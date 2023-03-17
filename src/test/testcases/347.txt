@@ -1,0 +1,6 @@
+main:function void(){
+
+                    x:float;
+                    if(x<2) return 3;
+                    return 0;                       
+                    }

@@ -1,0 +1,4 @@
+
+        x : integer = 1;
+        x ,z:float =1.e-5,4.9;
+        

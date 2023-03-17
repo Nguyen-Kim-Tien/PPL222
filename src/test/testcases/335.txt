@@ -1,0 +1,7 @@
+main:function void(){
+
+                    do{
+                        x:integer=1;
+                    }while((x==1) && (y<2));
+                        
+                    }

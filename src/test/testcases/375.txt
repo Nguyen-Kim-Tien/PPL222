@@ -1,0 +1,2 @@
+ main : function void(){ 
+                        return foo(1, a, b) + 1;} 
