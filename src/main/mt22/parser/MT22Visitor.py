@@ -69,13 +69,13 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#exprlist.
-    def visitExprlist(self, ctx:MT22Parser.ExprlistContext):
+    # Visit a parse tree produced by MT22Parser#expList.
+    def visitExpList(self, ctx:MT22Parser.ExpListContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#parameter.
-    def visitParameter(self, ctx:MT22Parser.ParameterContext):
+    # Visit a parse tree produced by MT22Parser#param.
+    def visitParam(self, ctx:MT22Parser.ParamContext):
         return self.visitChildren(ctx)
 
 
@@ -131,11 +131,6 @@ class MT22Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by MT22Parser#factor.
     def visitFactor(self, ctx:MT22Parser.FactorContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by MT22Parser#arrayCell.
-    def visitArrayCell(self, ctx:MT22Parser.ArrayCellContext):
         return self.visitChildren(ctx)
 
 
@@ -214,13 +209,13 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#stmtTerm.
-    def visitStmtTerm(self, ctx:MT22Parser.StmtTermContext):
+    # Visit a parse tree produced by MT22Parser#stmtList.
+    def visitStmtList(self, ctx:MT22Parser.StmtListContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#stmtList.
-    def visitStmtList(self, ctx:MT22Parser.StmtListContext):
+    # Visit a parse tree produced by MT22Parser#stmts.
+    def visitStmts(self, ctx:MT22Parser.StmtsContext):
         return self.visitChildren(ctx)
 
 
@@ -244,18 +239,18 @@ class MT22Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#inheritance.
-    def visitInheritance(self, ctx:MT22Parser.InheritanceContext):
+    # Visit a parse tree produced by MT22Parser#inherit.
+    def visitInherit(self, ctx:MT22Parser.InheritContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#paramterList.
-    def visitParamterList(self, ctx:MT22Parser.ParamterListContext):
+    # Visit a parse tree produced by MT22Parser#paramList.
+    def visitParamList(self, ctx:MT22Parser.ParamListContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MT22Parser#paramterListTerm.
-    def visitParamterListTerm(self, ctx:MT22Parser.ParamterListTermContext):
+    # Visit a parse tree produced by MT22Parser#paramTail.
+    def visitParamTail(self, ctx:MT22Parser.ParamTailContext):
         return self.visitChildren(ctx)
 
 

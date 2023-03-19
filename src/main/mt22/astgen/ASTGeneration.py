@@ -1,7 +1,7 @@
 from MT22Visitor import MT22Visitor
 from MT22Parser import MT22Parser
 from AST import *
-from functools import reduce
+from functools import reduce 
 
 def flatten(lst):
     return [elem for sublist in lst for elem in (flatten(sublist) if isinstance(sublist, list) else [sublist])]
@@ -18,7 +18,7 @@ class ASTGeneration(MT22Visitor):
     def visitArraytype(self, ctx: MT22Parser.ArraytypeContext):
         lst_dms = self.visit(ctx.dimension())
         typ = self.visit(ctx.eletype())
-        return ArrayType(lst_dms, typ)
+        return ArrayType(lst_dms, typ) 
 
     def visitNumber(self, ctx: MT22Parser.NumberContext):
         return self.visitChildren(ctx)
@@ -47,7 +47,7 @@ class ASTGeneration(MT22Visitor):
 
     def visitVardeclEq(self, ctx: MT22Parser.VardeclEqContext):
         if ctx.assignment():
-            ident = ctx.IDENTIFIER().getText()
+            ident = ctx.ID().getText()
             assign = self.visit(ctx.assignment())
             expr = self.visit(ctx.expr())
             lst = [ident, assign, expr]
@@ -59,29 +59,29 @@ class ASTGeneration(MT22Visitor):
 
             return list(map(lambda x, y: VarDecl(x, eletype, y), identlist, val))
         else:
-            ident = ctx.IDENTIFIER().getText()
+            ident = ctx.ID().getText()
             expr = self.visit(ctx.expr())
             typ = self.visit(ctx.getChild(2))
             return VarDecl(ident, typ, expr)
 
     def visitAssignment(self, ctx: MT22Parser.AssignmentContext):
         if ctx.assignment():
-            return [ctx.IDENTIFIER().getText(), self.visit(ctx.assignment()), self.visit(ctx.expr())]
-        return [ctx.IDENTIFIER().getText(), self.visit(ctx.getChild(2)), self.visit(ctx.expr())]
+            return [ctx.ID().getText(), self.visit(ctx.assignment()), self.visit(ctx.expr())]
+        return [ctx.ID().getText(), self.visit(ctx.getChild(2)), self.visit(ctx.expr())]
 
     def visitArraylit(self, ctx: MT22Parser.ArraylitContext):
-        return ArrayLit(self.visit(ctx.exprlist()) if ctx.exprlist() else [])
+        return ArrayLit(self.visit(ctx.expList()) if ctx.expList() else [])
 
     def visitIdlist(self, ctx: MT22Parser.IdlistContext):
-        return [ctx.IDENTIFIER().getText()] + self.visit(ctx.idlist()) if ctx.getChildCount() != 1 else [ctx.IDENTIFIER().getText()]
+        return [ctx.ID().getText()] + self.visit(ctx.idlist()) if ctx.getChildCount() != 1 else [ctx.ID().getText()]
 
-    def visitExprlist(self, ctx: MT22Parser.ExprlistContext):
-        return [self.visit(ctx.expr())] + self.visit(ctx.exprlist()) if ctx.getChildCount() != 1 else [self.visit(ctx.expr())]
+    def visitExpList(self, ctx: MT22Parser.ExpListContext):
+        return [self.visit(ctx.expr())] + self.visit(ctx.expList()) if ctx.getChildCount() != 1 else [self.visit(ctx.expr())]
 
-    def visitParameter(self, ctx: MT22Parser.ParameterContext):
+    def visitParam(self, ctx: MT22Parser.ParamContext):
         inherited = True if ctx.INHERIT() else False
         out = True if ctx.OUT() else False
-        ident = ctx.IDENTIFIER().getText()
+        ident = ctx.ID().getText()
         eletype = self.visit(ctx.eletype()) if ctx.eletype() else self.visit(ctx.arraytype())
         return ParamDecl(ident, eletype, out, inherited)
 
@@ -99,14 +99,14 @@ class ASTGeneration(MT22Visitor):
         return BinExpr(self.visit(ctx.compare()), self.visit(ctx.expr2(0)), self.visit(ctx.expr2(1)))
 
     def visitCompare(self, ctx: MT22Parser.CompareContext):
-        if ctx.EQUAL_TO():
-            return ctx.EQUAL_TO().getText()
-        elif ctx.NOT_EQUAL():
-            return ctx.NOT_EQUAL().getText()
+        if ctx.EQ():
+            return ctx.EQ().getText()
+        elif ctx.NOT_EQ():
+            return ctx.NOT_EQ().getText()
         elif ctx.LESS():
             return ctx.LESS().getText()
-        elif ctx.GREATER():
-            return ctx.GREATER().getText()
+        elif ctx.GT():
+            return ctx.GT().getText()
         elif ctx.LTE():
             return ctx.LTE().getText()
         elif ctx.GTE():
@@ -123,10 +123,10 @@ class ASTGeneration(MT22Visitor):
     def visitExpr3(self, ctx: MT22Parser.Expr3Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.expr4())
-        if ctx.PLUS():
-            return BinExpr(ctx.PLUS().getText(), self.visit(ctx.expr3()), self.visit(ctx.expr4()))
-        elif ctx.MINUS():
-            return BinExpr(ctx.MINUS().getText(), self.visit(ctx.expr3()), self.visit(ctx.expr4()))
+        if ctx.ADD():
+            return BinExpr(ctx.ADD().getText(), self.visit(ctx.expr3()), self.visit(ctx.expr4()))
+        elif ctx.SUB():
+            return BinExpr(ctx.SUB().getText(), self.visit(ctx.expr3()), self.visit(ctx.expr4()))
 
     def visitExpr4(self, ctx: MT22Parser.Expr4Context):
         if ctx.getChildCount() == 1:
@@ -146,13 +146,13 @@ class ASTGeneration(MT22Visitor):
     def visitExpr6(self, ctx: MT22Parser.Expr6Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.expr7())
-        return UnExpr(ctx.MINUS().getText(), self.visit(ctx.expr6()))
+        return UnExpr(ctx.SUB().getText(), self.visit(ctx.expr6()))
 
     def visitExpr7(self, ctx: MT22Parser.Expr7Context):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.expr8())
-        ident = ctx.IDENTIFIER().getText()
-        exp = self.visit(ctx.exprlist())
+        ident = ctx.ID().getText()
+        exp = self.visit(ctx.expList())
         return ArrayCell(ident, exp) 
 
     def visitExpr8(self, ctx: MT22Parser.Expr8Context):
@@ -168,8 +168,8 @@ class ASTGeneration(MT22Visitor):
             return FloatLit(float(ctx.FLOATLIT().getText()))
         elif ctx.STRINGLIT():
             return StringLit(ctx.STRINGLIT().getText())
-        elif ctx.IDENTIFIER():
-            return Id(str(ctx.IDENTIFIER().getText()))
+        elif ctx.ID():
+            return Id(str(ctx.ID().getText()))
         elif ctx.funccall():
             return self.visit(ctx.funccall())
         elif ctx.arraylit():
@@ -177,8 +177,6 @@ class ASTGeneration(MT22Visitor):
         elif ctx.BOOLEANLIT():
             return BooleanLit(True if ctx.BOOLEANLIT().getText() == "true" else False)
 
-    def visitArrayCell(self, ctx: MT22Parser.ArrayCellContext):
-        return self.visitChildren(ctx)
 
     def visitFunccall(self, ctx: MT22Parser.FunccallContext):
         if ctx.specialFunction():
@@ -186,7 +184,7 @@ class ASTGeneration(MT22Visitor):
             if expr is not None:
                 expr = expr if isinstance(expr, list) else [expr]
             return FuncCall(ident, expr if expr is not None else [])
-        return FuncCall(ctx.IDENTIFIER().getText(), self.visit(ctx.exprlist()) if ctx.exprlist() else [])
+        return FuncCall(ctx.ID().getText(), self.visit(ctx.expList()) if ctx.expList() else [])
 
     def visitStmt(self, ctx: MT22Parser.StmtContext):
         if ctx.assignStmt():
@@ -217,9 +215,9 @@ class ASTGeneration(MT22Visitor):
 
     def visitLhs(self, ctx: MT22Parser.LhsContext):
         if ctx.getChildCount() == 1:
-            return Id(ctx.IDENTIFIER().getText())
-        ident = ctx.IDENTIFIER().getText()
-        expr = self.visit(ctx.exprlist())
+            return Id(ctx.ID().getText())
+        ident = ctx.ID().getText()
+        expr = self.visit(ctx.expList())
         return ArrayCell(ident, expr)
 
     def visitStmtlocal(self, ctx: MT22Parser.StmtlocalContext):
@@ -244,7 +242,7 @@ class ASTGeneration(MT22Visitor):
         return ForStmt(initexp, conditionExpr, updateExpr, stmt)
 
     def visitInitExpr(self, ctx: MT22Parser.InitExprContext):
-        return AssignStmt(Id(ctx.IDENTIFIER().getText()), self.visit(ctx.expr()))
+        return AssignStmt(Id(ctx.ID().getText()), self.visit(ctx.expr()))
 
     def visitConditionExpr(self, ctx: MT22Parser.ConditionExprContext):
         return BinExpr(self.visit(ctx.operator()), self.visit(ctx.expr(0)), self.visit(ctx.expr(1)))
@@ -252,15 +250,15 @@ class ASTGeneration(MT22Visitor):
     def visitOperator(self, ctx: MT22Parser.OperatorContext):
         if ctx.LESS():
             return ctx.LESS().getText()
-        elif ctx.GREATER():
-            return ctx.GREATER().getText()
-        elif ctx.EQUAL_TO():
-            return ctx.EQUAL_TO().getText()
+        elif ctx.GT():
+            return ctx.GT().getText()
+        elif ctx.EQ():
+            return ctx.EQ().getText()
         elif ctx.GTE():
             return ctx.GTE().getText()
         elif ctx.LTE():
             return ctx.LTE().getText()
-        return ctx.NOT_EQUAL().getText()
+        return ctx.NOT_EQ().getText()
 
     def visitUpdateExpr(self, ctx: MT22Parser.UpdateExprContext):
         return self.visit(ctx.expr())
@@ -271,7 +269,6 @@ class ASTGeneration(MT22Visitor):
         return WhileStmt(expr, stmt)
 
     def visitDoWhileStmt(self, ctx: MT22Parser.DoWhileStmtContext):
-        # doWhileStmt: DO blockStmt WHILE expr SEMI;
         return DoWhileStmt(self.visit(ctx.expr()), self.visit(ctx.blockStmt()))
 
     def visitCallStmt(self, ctx: MT22Parser.CallStmtContext):
@@ -280,22 +277,22 @@ class ASTGeneration(MT22Visitor):
             if expr is not None:
                 expr = expr if isinstance(expr, list) else [expr]
             return CallStmt(ident, expr if expr is not None else [])
-        return CallStmt(ctx.IDENTIFIER().getText(), self.visit(ctx.exprlist()) if ctx.exprlist() else [])
+        return CallStmt(ctx.ID().getText(), self.visit(ctx.expList()) if ctx.expList() else [])
 
     def visitBlockStmt(self, ctx: MT22Parser.BlockStmtContext):
-        return BlockStmt(self.visit(ctx.stmtTerm()))
-
-    def visitStmtTerm(self, ctx: MT22Parser.StmtTermContext):
-        if ctx.getChildCount() == 0:
-            return []
-        return self.visit(ctx.stmtList())
+        return BlockStmt(self.visit(ctx.stmtList()))
 
     def visitStmtList(self, ctx: MT22Parser.StmtListContext):
+        if ctx.getChildCount() == 0:
+            return []
+        return self.visit(ctx.stmts())
+
+    def visitStmts(self, ctx: MT22Parser.StmtsContext):
         if ctx.getChildCount() == 1:
             return self.visit(ctx.stmt()) if isinstance(self.visit(ctx.stmt()), list) else [self.visit(ctx.stmt())]
         local = self.visit(ctx.stmt()) if isinstance(
             self.visit(ctx.stmt()), list) else [self.visit(ctx.stmt())]
-        return local + self.visit(ctx.stmtList())
+        return local + self.visit(ctx.stmts())
 
     def visitBreakStmt(self, ctx: MT22Parser.BreakStmtContext):
         return BreakStmt()
@@ -307,27 +304,27 @@ class ASTGeneration(MT22Visitor):
         return ReturnStmt(self.visit(ctx.expr()) if ctx.expr() else None)
     
     def visitFuncdecl(self, ctx: MT22Parser.FuncdeclContext):
-        ident = ctx.IDENTIFIER().getText()
+        ident = ctx.ID().getText()
         rettype = self.visit(ctx.returnType())
-        param_list = self.visit(ctx.paramterList())
-        inherits = self.visit(ctx.inheritance()) if ctx.inheritance() else None
+        param_list = self.visit(ctx.paramList())
+        inherits = self.visit(ctx.inherit()) if ctx.inherit() else None
         blockStmt = self.visit(ctx.blockStmt())
         return FuncDecl(ident, rettype, param_list, inherits, blockStmt)
 
-    def visitInheritance(self, ctx: MT22Parser.InheritanceContext):
+    def visitInherit(self, ctx: MT22Parser.InheritContext):
         if ctx.getChildCount() == 0:
             return None
-        return ctx.IDENTIFIER().getText()
+        return ctx.ID().getText()
 
-    def visitParamterList(self, ctx: MT22Parser.ParamterListContext):
+    def visitParamList(self, ctx: MT22Parser.ParamListContext):
         if ctx.getChildCount() == 0:
             return []
-        return self.visit(ctx.paramterListTerm())
+        return self.visit(ctx.paramTail())
 
-    def visitParamterListTerm(self, ctx: MT22Parser.ParamterListTermContext):
+    def visitParamTail(self, ctx: MT22Parser.ParamTailContext):
         if ctx.getChildCount() == 1:
-            return [self.visit(ctx.parameter())]
-        return [self.visit(ctx.parameter())] + self.visit(ctx.paramterListTerm())
+            return [self.visit(ctx.param())]
+        return [self.visit(ctx.param())] + self.visit(ctx.paramTail())
 
     def visitReturnType(self, ctx: MT22Parser.ReturnTypeContext):
         if ctx.INTEGER():
@@ -369,7 +366,7 @@ class ASTGeneration(MT22Visitor):
         return ctx.PRINTSTRING().getText(), self.visit(ctx.expr())
 
     def visitSuperCall(self, ctx: MT22Parser.SuperCallContext):
-        return ctx.SUPER().getText(), self.visit(ctx.exprlist())
+        return ctx.SUPER().getText(), self.visit(ctx.expList())
 
     def visitPreDefault(self, ctx: MT22Parser.PreDefaultContext):
         return ctx.PREVENTDEFAULT().getText(), None
